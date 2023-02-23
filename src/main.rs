@@ -1,9 +1,15 @@
 #![warn(clippy::all, clippy::pedantic)]
 
-use bracket_lib::prelude::*;
+mod map;
+mod prelude {
+    pub use bracket_lib::prelude::*;
 
-const WINDOW_HEIGHT: i16 = 50;
-const WINDOW_WIDTH: i16 = 80;
+    pub const WINDOW_HEIGHT: i16 = 50;
+    pub const WINDOW_WIDTH: i16 = 80;
+    pub use crate::map::*;
+}
+
+use prelude::*;
 
 fn main() -> BError {
     let context = BTermBuilder::simple80x50()
