@@ -1,12 +1,18 @@
 #![warn(clippy::all, clippy::pedantic)]
 
 mod map;
+mod player;
 mod prelude {
     pub use bracket_lib::prelude::*;
 
     pub const SCREEN_HEIGHT: i32 = 50;
     pub const SCREEN_WIDTH: i32 = 80;
     pub use crate::map::*;
+    pub use crate::player::*;
+
+    pub const WALL: char = '#';
+    pub const FLOOR: char = '.';
+    pub const PLAYER: char = '@';
 }
 
 use prelude::*;
@@ -21,16 +27,24 @@ fn main() -> BError {
 
 struct RustyRogue {
     map: Map,
+    player: Player,
 }
 impl GameState for RustyRogue {
     fn tick(&mut self, ctx: &mut BTerm) {
-        // ctx.print_centered(SCREEN_HEIGHT / 2, "Hello World!");
+        // update state
+        self.player.update(ctx, &self.map);
+
+        // render frame
         ctx.cls();
         self.map.render(ctx);
+        self.player.render(ctx);
     }
 }
 impl RustyRogue {
     fn new() -> Self {
-        Self { map: Map::new() }
+        Self {
+            map: Map::new(),
+            player: Player::new(Point::new(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)),
+        }
     }
 }

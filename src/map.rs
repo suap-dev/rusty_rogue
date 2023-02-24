@@ -1,23 +1,19 @@
 use crate::prelude::*;
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
-const WALL: char = '#';
-const PLAYER: char = '@';
-const FLOOR: char = '.';
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum Tile {
-    Wall, // #
+    Wall,
     Floor,
-    // @ - player
 }
 
-pub fn get_index(x: i32, y: i32) -> usize {
+fn get_index(x: i32, y: i32) -> usize {
     #![allow(clippy::cast_sign_loss)]
     ((y * SCREEN_WIDTH) + x) as usize
 }
 
 #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
-pub fn get_coordinates(index: usize) -> (i32, i32) {
+fn get_coordinates(index: usize) -> (i32, i32) {
     (index as i32 % SCREEN_WIDTH, index as i32 / SCREEN_WIDTH)
 }
 
