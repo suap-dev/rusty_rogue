@@ -10,9 +10,10 @@ mod prelude {
     pub use crate::map::*;
     pub use crate::player::*;
 
-    pub const WALL: char = '#';
-    pub const FLOOR: char = '.';
-    pub const PLAYER: char = '@';
+    // TODO: package/enum/struct with glyphs
+    pub const WALL_GLYPH: char = '#';
+    pub const FLOOR_GLYPH: char = '.';
+    pub const PLAYER_GLYPH: char = '@';
 }
 
 use prelude::*;

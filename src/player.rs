@@ -30,7 +30,7 @@ impl Player {
             self.position.y,
             WHITE,
             BLACK,
-            to_cp437(PLAYER),
+            to_cp437(PLAYER_GLYPH),
         );
     }
 }
