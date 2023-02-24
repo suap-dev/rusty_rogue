@@ -4,8 +4,8 @@ mod map;
 mod prelude {
     pub use bracket_lib::prelude::*;
 
-    pub const WINDOW_HEIGHT: i16 = 50;
-    pub const WINDOW_WIDTH: i16 = 80;
+    pub const SCREEN_HEIGHT: i32 = 50;
+    pub const SCREEN_WIDTH: i32 = 80;
     pub use crate::map::*;
 }
 
@@ -16,12 +16,21 @@ fn main() -> BError {
         .with_title("Rusty Rogue")
         .build()?;
 
-    main_loop(context, RustyRogue {})
+    main_loop(context, RustyRogue::new())
 }
 
-struct RustyRogue {}
+struct RustyRogue {
+    map: Map,
+}
 impl GameState for RustyRogue {
     fn tick(&mut self, ctx: &mut BTerm) {
-        ctx.print_centered(WINDOW_HEIGHT / 2, "Hello World!");
+        // ctx.print_centered(SCREEN_HEIGHT / 2, "Hello World!");
+        ctx.cls();
+        self.map.render(ctx);
+    }
+}
+impl RustyRogue {
+    fn new() -> Self {
+        Self { map: Map::new() }
     }
 }
