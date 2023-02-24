@@ -31,6 +31,27 @@ impl Map {
         }
     }
 
+    pub fn in_bounds(&self, point: Point) -> bool {
+        (0 <= point.x && point.x < SCREEN_WIDTH) && (0 <= point.y && point.y < SCREEN_HEIGHT)
+    }
+
+    pub fn is_traversable(&self, point: Point) -> bool {
+        self.in_bounds(point)
+            && *self
+                .tiles
+                .get(get_index(point.x, point.y))
+                .expect("Invalid tile index")
+                == Tile::Floor
+    }
+
+    pub fn try_index(&self, point: Point) -> Option<usize> {
+        if self.in_bounds(point) {
+            Some(get_index(point.x, point.y))
+        } else {
+            None
+        }
+    }
+
     pub fn render(&self, ctx: &mut BTerm) {
         for y in 0..SCREEN_HEIGHT {
             for x in 0..SCREEN_WIDTH {
