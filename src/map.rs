@@ -54,7 +54,7 @@ impl Map {
                 let index = get_index(x, y);
                 match self.tiles.get(index).expect("Invalid tile index") {
                     Tile::Wall => ctx.set(x, y, GREEN, BLACK, to_cp437(WALL_GLYPH)),
-                    Tile::Floor => ctx.set(x, y, YELLOW, BLACK, to_cp437(FLOOR_GLYPH)),
+                    Tile::Floor => ctx.set(x, y, LIGHT_SLATE, BLACK, to_cp437(FLOOR_GLYPH)),
                 }
             }
         }
