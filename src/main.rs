@@ -1,6 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 
 mod map;
+mod map_builder;
 mod player;
 mod prelude {
     pub use bracket_lib::prelude::*;
@@ -9,6 +10,7 @@ mod prelude {
     pub const SCREEN_WIDTH: i32 = 80;
     pub use crate::map::*;
     pub use crate::player::*;
+    pub use crate::map_builder::*;
 
     // TODO: package/enum/struct with glyphs
     pub const WALL_GLYPH: char = '#';
