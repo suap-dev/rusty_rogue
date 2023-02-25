@@ -7,7 +7,7 @@ pub enum TileType {
     Floor,
 }
 
-fn get_index(x: i32, y: i32) -> usize {
+pub fn get_index(x: i32, y: i32) -> usize {
     #![allow(clippy::cast_sign_loss)]
     ((y * SCREEN_WIDTH) + x) as usize
 }
@@ -40,13 +40,17 @@ impl Map {
                 == TileType::Floor
     }
 
-    // fn index_of(&self, point: Point) -> Option<usize> {
-    //     if Self::in_bounds(point) {
-    //         Some(get_index(point.x, point.y))
-    //     } else {
-    //         None
-    //     }
-    // }
+    pub fn index_of(&self, point: Point) -> Option<usize> {
+        if Self::in_bounds(point) {
+            Some(get_index(point.x, point.y))
+        } else {
+            None
+        }
+    }
+
+    pub fn index_at(&self, x: i32, y: i32) -> Option<usize> {
+        self.index_of(Point::new(x, y))
+    }
 
     pub fn render(&self, ctx: &mut BTerm) {
         for y in 0..SCREEN_HEIGHT {
