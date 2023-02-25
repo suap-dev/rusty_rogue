@@ -2,7 +2,7 @@ use crate::prelude::*;
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 
 #[derive(Copy, Clone, PartialEq)]
-pub enum Tile {
+pub enum TileType {
     Wall,
     Floor,
 }
@@ -18,12 +18,12 @@ fn get_index(x: i32, y: i32) -> usize {
 // }
 
 pub struct Map {
-    pub tiles: Vec<Tile>,
+    pub tiles: Vec<TileType>,
 }
 impl Map {
     pub fn new() -> Self {
         Self {
-            tiles: vec![Tile::Floor; NUM_TILES],
+            tiles: vec![TileType::Floor; NUM_TILES],
         }
     }
 
@@ -37,7 +37,7 @@ impl Map {
                 .tiles
                 .get(get_index(point.x, point.y))
                 .expect("Invalid tile index")
-                == Tile::Floor
+                == TileType::Floor
     }
 
     // fn index_of(&self, point: Point) -> Option<usize> {
@@ -53,8 +53,8 @@ impl Map {
             for x in 0..SCREEN_WIDTH {
                 let index = get_index(x, y);
                 match self.tiles.get(index).expect("Invalid tile index") {
-                    Tile::Wall => ctx.set(x, y, GREEN, BLACK, to_cp437(WALL_GLYPH)),
-                    Tile::Floor => ctx.set(x, y, LIGHT_SLATE, BLACK, to_cp437(FLOOR_GLYPH)),
+                    TileType::Wall => ctx.set(x, y, GREEN, BLACK, to_cp437(WALL_GLYPH)),
+                    TileType::Floor => ctx.set(x, y, LIGHT_SLATE, BLACK, to_cp437(FLOOR_GLYPH)),
                 }
             }
         }
