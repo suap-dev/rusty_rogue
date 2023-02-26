@@ -1,43 +1,39 @@
 use crate::prelude::*;
-const NUM_ROOMS: usize = 20;
 
 pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
     pub player_spawn: Point,
+    rng: RandomNumberGenerator,
 }
 impl MapBuilder {
-    pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut builder = Self {
-            map: Map::new(),
+    pub fn new(map_width: i32, map_height: i32) -> Self {
+        let builder = Self {
+            map: Map::fill(map_width, map_height, TileType::Wall),
             rooms: Vec::new(),
             player_spawn: Point::zero(),
+            rng: RandomNumberGenerator::new(),
         };
-
-        builder.fill(TileType::Wall);
-        builder.carve_random_rooms(rng);
-        builder.carve_corridors(rng);
-        builder.player_spawn = builder.rooms.first().expect("No first room?").center();
 
         builder
     }
 
-    fn fill(&mut self, tile: TileType) {
+    pub fn fill(&mut self, tile: TileType) {
         self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
 
-    fn carve_random_rooms(&mut self, rng: &mut RandomNumberGenerator) {
+    pub fn carve_rooms(&mut self, rooms_number: i32) {
         const MAX_ROOM_WIDTH: i32 = 10;
         const MAX_ROOM_HEIGHT: i32 = 10;
 
         // generate rooms until you have NUM_ROOMS of them
-        while self.rooms.len() < NUM_ROOMS {
+        while self.rooms.len() < rooms_number as usize {
             // generate a room
             let room = Rect::with_size(
-                rng.range(1, SCREEN_WIDTH - MAX_ROOM_WIDTH),
-                rng.range(1, SCREEN_HEIGHT - MAX_ROOM_HEIGHT),
-                rng.range(2, MAX_ROOM_WIDTH),
-                rng.range(2, MAX_ROOM_HEIGHT),
+                self.rng.range(1, self.map.width() - MAX_ROOM_WIDTH),
+                self.rng.range(1, self.map.height() - MAX_ROOM_HEIGHT),
+                self.rng.range(2, MAX_ROOM_WIDTH),
+                self.rng.range(2, MAX_ROOM_HEIGHT),
             );
 
             // check if it overlaps with previously generated rooms
@@ -50,10 +46,15 @@ impl MapBuilder {
 
             // if not - add it to rooms list
             if !overlap {
-                room.for_each(|p| {
-                    if 0 < p.x && p.x < SCREEN_WIDTH && 0 < p.y && p.y < SCREEN_HEIGHT {
-                        let index = get_index(p.x, p.y);
-                        self.map.tiles[index] = TileType::Floor;
+                room.for_each(|tile| {
+                    if 0 < tile.x
+                        && tile.x < self.map.width()
+                        && 0 < tile.y
+                        && tile.y < self.map.height()
+                    {
+                        self.map
+                            .set_tile(tile, TileType::Floor)
+                            .expect("Can't set tile");
                     }
                 });
                 self.rooms.push(room);
@@ -61,7 +62,7 @@ impl MapBuilder {
         }
     }
 
-    fn carve_corridors(&mut self, rng: &mut RandomNumberGenerator) {
+    pub fn carve_corridors(&mut self) {
         // I feel like this is a hack, not a clean solution
         // we clone it to avoid borrow checker making a scene
         // we actualy carve the tunnels in the actual room list
@@ -76,7 +77,7 @@ impl MapBuilder {
             let this_center = room.center();
 
             // coin flip
-            if rng.range(0, 2) == 1 {
+            if self.rng.range(0, 2) == 1 {
                 self.carve_horizontal_tunnel(prev_center.x, this_center.x, prev_center.y);
                 self.carve_vertical_tunnel(prev_center.y, this_center.y, this_center.x);
             } else {
@@ -91,9 +92,10 @@ impl MapBuilder {
         use std::cmp::{max, min};
 
         for y in min(y1, y2)..=max(y1, y2) {
-            if let Some(index) = self.map.index_at(x, y) {
-                self.map.tiles[index] = TileType::Floor;
-            }
+            self.map
+                .set_tile_at(x, y, TileType::Floor)
+                .expect("Can't set tile");
+            // self.map.tiles[index] = TileType::Floor;
         }
     }
 

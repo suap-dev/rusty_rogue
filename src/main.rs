@@ -5,9 +5,6 @@ mod map_builder;
 mod player;
 mod prelude {
     pub use bracket_lib::prelude::*;
-
-    pub const SCREEN_HEIGHT: i32 = 50;
-    pub const SCREEN_WIDTH: i32 = 80;
     pub use crate::map::*;
     pub use crate::map_builder::*;
     pub use crate::player::*;
@@ -19,6 +16,10 @@ mod prelude {
 }
 
 use prelude::*;
+
+const SCREEN_HEIGHT: i32 = 50;
+const SCREEN_WIDTH: i32 = 80;
+const NUM_ROOMS: i32 = 20;
 
 fn main() -> BError {
     let context = BTermBuilder::simple80x50()
@@ -45,11 +46,16 @@ impl GameState for RustyRogue {
 }
 impl RustyRogue {
     fn new() -> Self {
-        let mut rng = RandomNumberGenerator::new();
-        let map_builder = MapBuilder::new(&mut rng);
+        // let mut rng = RandomNumberGenerator::new();
+        let mut builder = MapBuilder::new(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        builder.fill(TileType::Wall);
+        builder.carve_rooms(NUM_ROOMS);
+        builder.carve_corridors();
+        builder.player_spawn = builder.rooms.first().expect("No first room?").center();
         Self {
-            map: map_builder.map,
-            player: Player::new(map_builder.player_spawn),
+            map: builder.map,
+            player: Player::new(builder.player_spawn),
         }
 
         // Self {
