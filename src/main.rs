@@ -4,10 +4,10 @@ mod map;
 mod map_builder;
 mod player;
 mod prelude {
-    pub use bracket_lib::prelude::*;
     pub use crate::map::*;
     pub use crate::map_builder::*;
     pub use crate::player::*;
+    pub use bracket_lib::prelude::*;
 
     // TODO: package/enum/struct with glyphs
     pub const WALL_GLYPH: char = '#';
@@ -49,18 +49,14 @@ impl RustyRogue {
         // let mut rng = RandomNumberGenerator::new();
         let mut builder = MapBuilder::new(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        builder.fill(TileType::Wall);
-        builder.carve_rooms(NUM_ROOMS);
-        builder.carve_corridors();
-        builder.player_spawn = builder.rooms.first().expect("No first room?").center();
-        Self {
-            map: builder.map,
-            player: Player::new(builder.player_spawn),
-        }
+        builder
+            .carve_rooms(NUM_ROOMS)
+            .carve_corridors()
+            .default_player_spawn();
 
-        // Self {
-        //     map: Map::new(),
-        //     player: Player::new(Point::new(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)),
-        // }
+        Self {
+            map: builder.consume_map(),
+            player: Player::new(builder.get_player_spawn()),
+        }
     }
 }
