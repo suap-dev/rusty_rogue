@@ -19,11 +19,12 @@ impl MapBuilder {
         }
     }
 
-    pub fn fill(&mut self, tile_type: TileType) {
+    pub fn fill(&mut self, tile_type: TileType) -> &mut Self {
         self.map.fill(tile_type);
+        self
     }
 
-    pub fn carve_rooms(&mut self, rooms_number: i32) {
+    pub fn carve_rooms(&mut self, rooms_number: i32) -> &mut Self {
         // generate rooms until you have NUM_ROOMS of them
 
         #[allow(clippy::cast_sign_loss)]
@@ -60,9 +61,10 @@ impl MapBuilder {
                 self.rooms.push(room);
             }
         }
+        self
     }
 
-    pub fn carve_corridors(&mut self) {
+    pub fn carve_corridors(&mut self) -> &mut Self {
         // I feel like this is a hack, not a clean solution
         // we clone it to avoid borrow checker making a scene
         // we actualy carve the tunnels in the actual room list
@@ -85,6 +87,7 @@ impl MapBuilder {
                 self.carve_horizontal_tunnel(prev_center.x, this_center.x, this_center.y);
             }
         }
+        self
     }
 
     // vertical tunnel between 2 points
@@ -113,8 +116,9 @@ impl MapBuilder {
         }
     }
 
-    pub fn default_player_spawn(&mut self) {
+    pub fn default_player_spawn(&mut self) -> &mut Self {
         self.player_spawn = self.rooms.first().expect("No first room?").center();
+        self
     }
 
     // pub fn map(&self) -> Map {
