@@ -14,20 +14,22 @@ pub enum TileType {
 pub struct Map {
     width: i32,
     height: i32,
-    pub tiles: Vec<TileType>,
+    tiles: Vec<TileType>,
 }
+
 impl Map {
     pub fn new(width: i32, height: i32) -> Self {
+        #[allow(clippy::cast_sign_loss)]
         let tiles_number = (width * height) as usize;
-
         Self {
             width,
             height,
             tiles: vec![TileType::Floor; tiles_number],
         }
     }
-    
-    pub fn fill(map_width: i32, map_height: i32, tile_type: TileType) -> Self {
+
+    pub fn filled(map_width: i32, map_height: i32, tile_type: TileType) -> Self {
+        #[allow(clippy::cast_sign_loss)]
         let tiles_number = (map_width * map_height) as usize;
 
         Self {
@@ -35,6 +37,20 @@ impl Map {
             height: map_height,
             tiles: vec![tile_type; tiles_number],
         }
+    }
+
+    pub fn empty() -> Self{
+        Self {
+            width: 0,
+            height: 0,
+            tiles: vec![],
+        }
+    }
+
+    pub fn fill(&mut self, tile_type: TileType) {
+        self.tiles.iter_mut().for_each(|tile| {
+            *tile = tile_type;
+        });
     }
 
     pub fn is_traversable(&self, point: Point) -> bool {
@@ -65,8 +81,8 @@ impl Map {
     }
 
     pub fn set_tile_at(&mut self, x: i32, y: i32, tile_type: TileType) -> Result<(), String> {
-        let index = self.index(x,y);
-        
+        let index = self.index(x, y);
+
         if let Some(x) = self.tiles.get_mut(index) {
             *x = tile_type;
             Ok(())
@@ -75,7 +91,7 @@ impl Map {
         }
     }
 
-    pub fn width(&self) -> i32{
+    pub fn width(&self) -> i32 {
         self.width
     }
 
@@ -94,10 +110,9 @@ impl Map {
             }
         }
     }
-    
 
+    #[allow(clippy::cast_sign_loss)]
     fn index(&self, x: i32, y: i32) -> usize {
-        #![allow(clippy::cast_sign_loss)]
         ((y * self.width) + x) as usize
     }
 

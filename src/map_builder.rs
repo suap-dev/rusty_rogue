@@ -1,32 +1,32 @@
 use crate::prelude::*;
 
+const MAX_ROOM_WIDTH: i32 = 10;
+const MAX_ROOM_HEIGHT: i32 = 10;
+
 pub struct MapBuilder {
     pub map: Map,
-    pub rooms: Vec<Rect>,
-    pub player_spawn: Point,
+    rooms: Vec<Rect>,
+    player_spawn: Point,
     rng: RandomNumberGenerator,
 }
 impl MapBuilder {
     pub fn new(map_width: i32, map_height: i32) -> Self {
-        let builder = Self {
-            map: Map::fill(map_width, map_height, TileType::Wall),
+        Self {
+            map: Map::filled(map_width, map_height, TileType::Wall),
             rooms: Vec::new(),
             player_spawn: Point::zero(),
             rng: RandomNumberGenerator::new(),
-        };
-
-        builder
+        }
     }
 
-    pub fn fill(&mut self, tile: TileType) {
-        self.map.tiles.iter_mut().for_each(|t| *t = tile);
+    pub fn fill(&mut self, tile_type: TileType) {
+        self.map.fill(tile_type);
     }
 
     pub fn carve_rooms(&mut self, rooms_number: i32) {
-        const MAX_ROOM_WIDTH: i32 = 10;
-        const MAX_ROOM_HEIGHT: i32 = 10;
-
         // generate rooms until you have NUM_ROOMS of them
+
+        #[allow(clippy::cast_sign_loss)]
         while self.rooms.len() < rooms_number as usize {
             // generate a room
             let room = Rect::with_size(
@@ -104,9 +104,28 @@ impl MapBuilder {
         use std::cmp::{max, min};
 
         for x in min(x1, x2)..=max(x1, x2) {
-            if let Some(index) = self.map.index_at(x, y) {
-                self.map.tiles[index] = TileType::Floor;
-            }
+            self.map
+                .set_tile_at(x, y, TileType::Floor)
+                .expect("Can't set tile");
+            // if let Some(index) = self.map.index_at(x, y) {
+            //     self.map.tiles[index] = TileType::Floor;
+            // }
         }
+    }
+
+    pub fn default_player_spawn(&mut self) {
+        self.player_spawn = self.rooms.first().expect("No first room?").center();
+    }
+
+    // pub fn map(&self) -> Map {
+    //     self.map
+    // }
+
+    pub fn get_player_spawn(&self) -> Point {
+        self.player_spawn
+    }
+
+    pub fn consume_map(&mut self) -> Map {
+        std::mem::replace(&mut self.map, Map::empty())
     }
 }
