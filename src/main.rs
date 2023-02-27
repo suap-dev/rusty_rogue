@@ -3,13 +3,11 @@
 mod camera;
 mod map;
 mod map_builder;
-mod player;
+// mod player;
 mod prelude {
-    pub use crate::camera::*;
-    pub use crate::map::*;
-    pub use crate::map_builder::*;
-    pub use crate::player::*;
+    pub use crate::{camera::*, map::*, map_builder::*};
     pub use bracket_lib::prelude::*;
+    pub use legion::{systems::CommandBuffer, world::SubWorld, *};
 
     // TODO: package/enum/struct with glyphs
     pub const WALL_GLYPH: char = '#';
@@ -47,39 +45,53 @@ fn main() -> BError {
 }
 
 struct RustyRogue {
-    map: Map,
-    player: Player,
-    camera: Camera,
+    // map: Map,
+    // player: Player,
+    // camera: Camera,
+    ecs: World,
+    resources: Resources,
+    systems: Schedule,
 }
 impl GameState for RustyRogue {
     fn tick(&mut self, ctx: &mut BTerm) {
         // update state
-        self.player.update(ctx, &self.map);
-        self.camera.update(self.player.position);
+        // self.player.update(ctx, &self.map);
+        // self.camera.update(self.player.position);
 
         // render frame
         ctx.set_active_console(0);
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
-        self.map.render_with_camera(ctx, &self.camera);
-        self.player.render_with_camera(ctx, &self.camera);
+        // self.map.render_with_camera(ctx, &self.camera);
+        // self.player.render_with_camera(ctx, &self.camera);
     }
 }
 impl RustyRogue {
     fn new() -> Self {
+        let mut ecs = World::default();
+        let mut resources = Resources::default();
         // let mut rng = RandomNumberGenerator::new();
         let mut builder = MapBuilder::new(SCREEN_WIDTH, SCREEN_HEIGHT);
-
         builder
             .carve_rooms(NUM_ROOMS)
             .carve_corridors()
             .default_player_spawn();
 
+        resources.insert(builder.consume_map());
+        resources.insert(Camera::new(
+            builder.get_player_spawn(),
+            CAMERA_WIDTH,
+            CAMERA_HEIGHT,
+        ));
+
         Self {
-            map: builder.consume_map(),
-            player: Player::new(builder.get_player_spawn()),
-            camera: Camera::new(builder.get_player_spawn(), CAMERA_WIDTH, CAMERA_HEIGHT),
+            ecs,
+            resources,
+            systems: build_scheduler(),
+            // map: builder.consume_map(),
+            // player: Player::new(builder.get_player_spawn()),
+            // camera: Camera::new(builder.get_player_spawn(), CAMERA_WIDTH, CAMERA_HEIGHT),
         }
     }
 }
