@@ -25,9 +25,20 @@ impl Player {
     }
 
     pub fn render(&self, ctx: &mut BTerm) {
+        ctx.set_active_console(1);
         ctx.set(
             self.position.x,
             self.position.y,
+            WHITE,
+            BLACK,
+            to_cp437(PLAYER_GLYPH),
+        );
+    }
+    pub fn render_with_camera(&self, ctx: &mut BTerm, camera: &Camera) {
+        ctx.set_active_console(1);
+        ctx.set(
+            self.position.x - camera.left(),
+            self.position.y - camera.top(),
             WHITE,
             BLACK,
             to_cp437(PLAYER_GLYPH),

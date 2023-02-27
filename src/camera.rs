@@ -1,13 +1,7 @@
 use crate::prelude::*;
 
 pub struct Camera {
-    // pub left_x: i32,
-    // pub right_x: i32,
-    // pub top_y: i32,
-    // pub bottom_y: i32,
     center: Point,
-    // pub width: i32,
-    // pub height: i32
     dx: i32,
     dy: i32,
 }
@@ -21,7 +15,7 @@ impl Camera {
         }
     }
 
-    pub fn reposition(&mut self, center: Point) {
+    pub fn update(&mut self, center: Point) {
         self.center = center;
     }
 

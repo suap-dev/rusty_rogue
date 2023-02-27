@@ -62,12 +62,12 @@ impl Map {
                 == TileType::Floor
     }
 
-    // TODO: implement Err
+    // TODO: implement Err?
     pub fn index_of(&self, point: Point) -> Option<usize> {
         self.index_at(point.x, point.y)
     }
 
-    // TODO: implement Err
+    // TODO: implement Err?
     pub fn index_at(&self, x: i32, y: i32) -> Option<usize> {
         if self.in_bounds(x, y) {
             Some(self.index(x, y))
@@ -99,7 +99,7 @@ impl Map {
         self.height
     }
 
-    pub fn render_no_camera(&self, ctx: &mut BTerm) {
+    pub fn render(&self, ctx: &mut BTerm) {
         for y in 0..self.height {
             for x in 0..self.width {
                 let index = self.index(x, y);
@@ -111,7 +111,7 @@ impl Map {
         }
     }
 
-    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
+    pub fn render_with_camera(&self, ctx: &mut BTerm, camera: &Camera) {
         ctx.set_active_console(0);
         for y in camera.top()..camera.bottom() {
             for x in camera.left()..camera.right() {
