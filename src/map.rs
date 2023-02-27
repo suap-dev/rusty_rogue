@@ -39,7 +39,7 @@ impl Map {
         }
     }
 
-    pub fn empty() -> Self{
+    pub fn empty() -> Self {
         Self {
             width: 0,
             height: 0,
@@ -99,13 +99,45 @@ impl Map {
         self.height
     }
 
-    pub fn render(&self, ctx: &mut BTerm) {
+    pub fn render_no_camera(&self, ctx: &mut BTerm) {
         for y in 0..self.height {
             for x in 0..self.width {
                 let index = self.index(x, y);
                 match self.tiles.get(index).expect("Invalid tile index") {
                     TileType::Wall => ctx.set(x, y, LIGHT_GREEN, BLACK, to_cp437(WALL_GLYPH)),
                     TileType::Floor => ctx.set(x, y, LIGHT_SLATE, BLACK, to_cp437(FLOOR_GLYPH)),
+                }
+            }
+        }
+    }
+
+    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
+        ctx.set_active_console(0);
+        for y in camera.top()..camera.bottom() {
+            for x in camera.left()..camera.right() {
+                // if the index is correct, then match on the index
+                if let Some(index) = self.index_at(x, y) {
+                    // so this .expect(...) is a double-safety mechanism
+                    // is it worth going like that? or should we just index with []
+                    // TODO: benchmark it some day? :)
+                    match self.tiles.get(index).expect("Invalid tile index") {
+                        TileType::Wall => ctx.set(
+                            // we need to translate map coordinates to screen coordinates
+                            x - camera.left(),
+                            y - camera.top(),
+                            LIGHT_GREEN,
+                            BLACK,
+                            to_cp437(WALL_GLYPH),
+                        ),
+                        TileType::Floor => ctx.set(
+                            // we need to translate map coordinates to screen coordinates
+                            x - camera.left(),
+                            y - camera.top(),
+                            LIGHT_SLATE,
+                            BLACK,
+                            to_cp437(FLOOR_GLYPH),
+                        ),
+                    }
                 }
             }
         }
