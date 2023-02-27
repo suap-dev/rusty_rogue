@@ -5,9 +5,10 @@ mod components;
 mod map;
 mod map_builder;
 mod spawner;
+mod systems;
 // mod player;
 mod prelude {
-    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*};
+    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*, systems::*};
     pub use bracket_lib::prelude::*;
     pub use legion::{systems::CommandBuffer, world::SubWorld, *};
 
@@ -44,7 +45,7 @@ fn main() -> BError {
 
 struct RustyRogue {
     // map: Map,
-    player: Player,
+    // player: Player,
     // camera: Camera,
     world: World,
     resources: Resources,
@@ -61,6 +62,9 @@ impl GameState for RustyRogue {
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
+
+        self.resources.insert(ctx.key);
+        self.schedule.execute(&mut self.world, &mut self.resources);
         // self.map.render_with_camera(ctx, &self.camera);
         // self.player.render_with_camera(ctx, &self.camera);
     }
@@ -88,7 +92,7 @@ impl RustyRogue {
         Self {
             world: ecs,
             resources,
-            schedule: build_scheduler(),
+            schedule: schedule(),
             // map: builder.consume_map(),
             // player: Player::new(builder.get_player_spawn()),
             // camera: Camera::new(builder.get_player_spawn(), CAMERA_WIDTH, CAMERA_HEIGHT),
