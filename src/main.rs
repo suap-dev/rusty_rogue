@@ -1,11 +1,13 @@
 #![warn(clippy::all, clippy::pedantic)]
 
 mod camera;
+mod components;
 mod map;
 mod map_builder;
+mod spawner;
 // mod player;
 mod prelude {
-    pub use crate::{camera::*, map::*, map_builder::*};
+    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*};
     pub use bracket_lib::prelude::*;
     pub use legion::{systems::CommandBuffer, world::SubWorld, *};
 
@@ -26,19 +28,15 @@ const CAMERA_HEIGHT: i32 = SCREEN_HEIGHT / 2;
 const NUM_ROOMS: i32 = 20;
 
 fn main() -> BError {
-    // let context = BTermBuilder::simple80x50()
     let context = BTermBuilder::new()
         .with_title("Rusty Rogue")
         .with_fps_cap(30.0)
         .with_dimensions(CAMERA_WIDTH, CAMERA_HEIGHT)
-        // .with_dimensions(SCREEN_WIDTH, SCREEN_HEIGHT)
         .with_tile_dimensions(32, 32)
         .with_resource_path("resources/")
         .with_font("dungeonfont.png", 32, 32)
         .with_simple_console(CAMERA_WIDTH, CAMERA_HEIGHT, "dungeonfont.png")
         .with_simple_console_no_bg(CAMERA_WIDTH, CAMERA_HEIGHT, "dungeonfont.png")
-        // .with_simple_console(SCREEN_WIDTH, SCREEN_HEIGHT, "dungeonfont.png")
-        // .with_simple_console_no_bg(SCREEN_WIDTH, SCREEN_HEIGHT, "dungeonfont.png")
         .build()?;
 
     main_loop(context, RustyRogue::new())
@@ -46,11 +44,11 @@ fn main() -> BError {
 
 struct RustyRogue {
     // map: Map,
-    // player: Player,
+    player: Player,
     // camera: Camera,
-    ecs: World,
+    world: World,
     resources: Resources,
-    systems: Schedule,
+    schedule: Schedule,
 }
 impl GameState for RustyRogue {
     fn tick(&mut self, ctx: &mut BTerm) {
@@ -78,6 +76,8 @@ impl RustyRogue {
             .carve_corridors()
             .default_player_spawn();
 
+        spawn_player(&mut ecs, builder.get_player_spawn());
+
         resources.insert(builder.consume_map());
         resources.insert(Camera::new(
             builder.get_player_spawn(),
@@ -86,9 +86,9 @@ impl RustyRogue {
         ));
 
         Self {
-            ecs,
+            world: ecs,
             resources,
-            systems: build_scheduler(),
+            schedule: build_scheduler(),
             // map: builder.consume_map(),
             // player: Player::new(builder.get_player_spawn()),
             // camera: Camera::new(builder.get_player_spawn(), CAMERA_WIDTH, CAMERA_HEIGHT),
