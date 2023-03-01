@@ -19,10 +19,10 @@ impl MapBuilder {
         }
     }
 
-    pub fn fill(&mut self, tile_type: TileType) -> &mut Self {
-        self.map.fill(tile_type);
-        self
-    }
+    // pub fn fill(&mut self, tile_type: TileType) -> &mut Self {
+    //     self.map.fill(tile_type);
+    //     self
+    // }
 
     pub fn carve_rooms(&mut self, rooms_number: i32) -> &mut Self {
         // generate rooms until you have NUM_ROOMS of them

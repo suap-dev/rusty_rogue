@@ -6,7 +6,7 @@ pub fn spawn_player(world: &mut World, pos: Point) {
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),
-            glyph: to_cp437('@'),
+            glyph: to_cp437(PLAYER_GLYPH),
         },
     ));
 }

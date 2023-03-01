@@ -3,11 +3,12 @@ use crate::prelude::*;
 #[system]
 #[write_component(Point)]
 #[read_component(Player)]
+#[allow(clippy::trivially_copy_pass_by_ref)] // regarding this: #[resource] key_pressed: &Option<VirtualKeyCode>,
 pub fn player_input(
     sub_world: &mut SubWorld,
     #[resource] map: &Map,
     // so Legion searches for the resource by TYPE ?
-    #[resource] key_pressed: &Option<VirtualKeyCode>,
+    #[resource] key_pressed: &Option<VirtualKeyCode>, // TODO: research if this is doable in a way that clippy doesn't complain
     #[resource] camera: &mut Camera,
 ) {
     if let Some(key_code) = key_pressed {
@@ -19,9 +20,7 @@ pub fn player_input(
             _other => Point::zero(),
         };
 
-        // if both x and y are none-zero
-        // TODO: can I implement it with delta != Point::zero() ?
-        if delta.x != 0 || delta.y != 0 {
+        if delta != Point::zero() {
             let mut players = <&mut Point>::query().filter(component::<Player>());
 
             players.iter_mut(sub_world).for_each(|position| {
