@@ -15,7 +15,7 @@ impl Camera {
         }
     }
 
-    pub fn update(&mut self, center: Point) {
+    pub fn center_at(&mut self, center: Point) {
         self.center = center;
     }
 

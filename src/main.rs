@@ -44,19 +44,12 @@ fn main() -> BError {
 }
 
 struct RustyRogue {
-    // map: Map,
-    // player: Player,
-    // camera: Camera,
     world: World,
     resources: Resources,
     schedule: Schedule,
 }
 impl GameState for RustyRogue {
     fn tick(&mut self, ctx: &mut BTerm) {
-        // update state
-        // self.player.update(ctx, &self.map);
-        // self.camera.update(self.player.position);
-
         // render frame
         ctx.set_active_console(0);
         ctx.cls();
@@ -65,15 +58,13 @@ impl GameState for RustyRogue {
 
         self.resources.insert(ctx.key);
         self.schedule.execute(&mut self.world, &mut self.resources);
-        // self.map.render_with_camera(ctx, &self.camera);
-        // self.player.render_with_camera(ctx, &self.camera);
+        render_draw_buffer(ctx).expect("Render failed");
     }
 }
 impl RustyRogue {
     fn new() -> Self {
         let mut ecs = World::default();
         let mut resources = Resources::default();
-        // let mut rng = RandomNumberGenerator::new();
         let mut builder = MapBuilder::new(SCREEN_WIDTH, SCREEN_HEIGHT);
         builder
             .carve_rooms(NUM_ROOMS)
@@ -93,9 +84,6 @@ impl RustyRogue {
             world: ecs,
             resources,
             schedule: schedule(),
-            // map: builder.consume_map(),
-            // player: Player::new(builder.get_player_spawn()),
-            // camera: Camera::new(builder.get_player_spawn(), CAMERA_WIDTH, CAMERA_HEIGHT),
         }
     }
 }

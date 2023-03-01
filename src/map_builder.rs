@@ -65,10 +65,12 @@ impl MapBuilder {
     }
 
     pub fn carve_corridors(&mut self) -> &mut Self {
+        // FIXME:
+        // Is it a hack?
         // I feel like this is a hack, not a clean solution
         // we clone it to avoid borrow checker making a scene
         // we actualy carve the tunnels in the actual room list
-        // this is just used as a map of them
+        // this is just used as a map of them.
         let mut rooms = self.rooms.clone();
 
         // sort by the order of the x coordinate of the rooms centers
@@ -98,7 +100,6 @@ impl MapBuilder {
             self.map
                 .set_tile_at(x, y, TileType::Floor)
                 .expect("Can't set tile");
-            // self.map.tiles[index] = TileType::Floor;
         }
     }
 
@@ -110,9 +111,6 @@ impl MapBuilder {
             self.map
                 .set_tile_at(x, y, TileType::Floor)
                 .expect("Can't set tile");
-            // if let Some(index) = self.map.index_at(x, y) {
-            //     self.map.tiles[index] = TileType::Floor;
-            // }
         }
     }
 
@@ -120,10 +118,6 @@ impl MapBuilder {
         self.player_spawn = self.rooms.first().expect("No first room?").center();
         self
     }
-
-    // pub fn map(&self) -> Map {
-    //     self.map
-    // }
 
     pub fn get_player_spawn(&self) -> Point {
         self.player_spawn

@@ -6,6 +6,8 @@ pub enum TileType {
     Floor,
 }
 
+// TODO: clean this file up
+
 // #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
 // fn coords_at(index: usize) -> (i32, i32) {
 //     (index as i32 % SCREEN_WIDTH, index as i32 / SCREEN_WIDTH)
@@ -150,5 +152,9 @@ impl Map {
 
     fn in_bounds(&self, x: i32, y: i32) -> bool {
         (0 <= x && x < self.width) && (0 <= y && y < self.height)
+    }
+
+    pub fn tiles(&self) -> &[TileType] {
+        self.tiles.as_ref()
     }
 }
