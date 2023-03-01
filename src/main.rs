@@ -1,20 +1,17 @@
 #![warn(clippy::all, clippy::pedantic)]
-
-mod camera;
 mod components;
-mod glyph;
-mod map;
-mod map_builder;
-mod spawner;
 mod systems;
+
+mod utils;
 // mod player;
 mod prelude {
-    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*, systems::*, glyph::*};
+    pub use crate::utils::*;
+    pub use crate::{components::*, systems::*};
     pub use bracket_lib::prelude::*;
     pub use legion::{systems::CommandBuffer, world::SubWorld, *};
 
     pub const ENEMY_TYPES: [FontCharType; 4] = [ETTIN, OGRE, ORC, GOBLIN];
-    
+
     pub const DEFAULT_COLOR: ColorPair = ColorPair {
         // WHITE
         fg: RGBA {

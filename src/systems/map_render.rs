@@ -7,7 +7,7 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
     let mut draw_batch = DrawBatch::new();
     // target(n) - n is the id of the console/context
     draw_batch.target(0);
-    for y in camera.top()..camera.bottom() {
+    for y in camera.top()..=camera.bottom() {
         for x in camera.left()..camera.right() {
             // if the index is correct, then match on the tile at the index
             if let Some(index) = map.index_at(x, y) {
