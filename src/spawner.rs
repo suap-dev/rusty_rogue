@@ -5,8 +5,8 @@ pub fn spawn_player(world: &mut World, pos: Point) {
         Player,
         pos,
         Render {
-            color: ColorPair::new(WHITE, BLACK),
-            glyph: to_cp437(PLAYER_GLYPH),
+            color: DEFAULT_COLOR,
+            glyph: glyph::PLAYER,
         },
     ));
 }

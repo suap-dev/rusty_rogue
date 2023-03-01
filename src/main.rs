@@ -2,20 +2,33 @@
 
 mod camera;
 mod components;
+pub mod glyph;
 mod map;
 mod map_builder;
 mod spawner;
 mod systems;
 // mod player;
 mod prelude {
-    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*, systems::*};
+    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*, systems::*, *};
     pub use bracket_lib::prelude::*;
     pub use legion::{systems::CommandBuffer, world::SubWorld, *};
 
-    // TODO: package/enum/struct with glyphs
-    pub const WALL_GLYPH: char = '#';
-    pub const FLOOR_GLYPH: char = '.';
-    pub const PLAYER_GLYPH: char = '@';
+    pub const DEFAULT_COLOR: ColorPair = ColorPair {
+        // WHITE
+        fg: RGBA {
+            r: 1.0,
+            g: 1.0,
+            b: 1.0,
+            a: 1.0,
+        },
+        // BLACK
+        bg: RGBA {
+            r: 0.0,
+            g: 0.0,
+            b: 0.0,
+            a: 1.0,
+        },
+    };
 }
 
 use prelude::*;
@@ -27,21 +40,6 @@ const CAMERA_WIDTH: i32 = SCREEN_WIDTH / 2;
 const CAMERA_HEIGHT: i32 = SCREEN_HEIGHT / 2;
 
 const NUM_ROOMS: i32 = 20;
-
-fn main() -> BError {
-    let context = BTermBuilder::new()
-        .with_title("Rusty Rogue")
-        .with_fps_cap(30.0)
-        .with_dimensions(CAMERA_WIDTH, CAMERA_HEIGHT)
-        .with_tile_dimensions(32, 32)
-        .with_resource_path("resources/")
-        .with_font("dungeonfont.png", 32, 32)
-        .with_simple_console(CAMERA_WIDTH, CAMERA_HEIGHT, "dungeonfont.png")
-        .with_simple_console_no_bg(CAMERA_WIDTH, CAMERA_HEIGHT, "dungeonfont.png")
-        .build()?;
-
-    main_loop(context, RustyRogue::new())
-}
 
 struct RustyRogue {
     world: World,
@@ -86,4 +84,19 @@ impl RustyRogue {
             schedule: schedule(),
         }
     }
+}
+
+fn main() -> BError {
+    let context = BTermBuilder::new()
+        .with_title("Rusty Rogue")
+        .with_fps_cap(30.0)
+        .with_dimensions(CAMERA_WIDTH, CAMERA_HEIGHT)
+        .with_tile_dimensions(32, 32)
+        .with_resource_path("resources/")
+        .with_font("dungeonfont.png", 32, 32)
+        .with_simple_console(CAMERA_WIDTH, CAMERA_HEIGHT, "dungeonfont.png")
+        .with_simple_console_no_bg(CAMERA_WIDTH, CAMERA_HEIGHT, "dungeonfont.png")
+        .build()?;
+
+    main_loop(context, RustyRogue::new())
 }

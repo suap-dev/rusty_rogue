@@ -11,16 +11,15 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
         for x in camera.left()..camera.right() {
             // if the index is correct, then match on the tile at the index
             if let Some(index) = map.index_at(x, y) {
-                let glyph = match map.tiles()[index] {
-                    TileType::Wall => to_cp437(WALL_GLYPH),
-                    TileType::Floor => to_cp437(FLOOR_GLYPH),
-                };
                 draw_batch.set(
                     // we target x, y point on screen coordinates,
                     // so we need to offset by the camera position
                     Point::new(x - camera.left(), y - camera.top()),
-                    ColorPair::new(WHITE, BLACK),
-                    glyph,
+                    DEFAULT_COLOR,
+                    match map.tiles()[index] {
+                        TileType::Wall => glyph::WALL,
+                        TileType::Floor => glyph::FLOOR,
+                    },
                 );
             }
         }
