@@ -17,8 +17,8 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
                     Point::new(x - camera.left(), y - camera.top()),
                     DEFAULT_COLOR,
                     match map.tiles()[index] {
-                        TileType::Wall => glyph::WALL,
-                        TileType::Floor => glyph::FLOOR,
+                        TileType::Wall => WALL,
+                        TileType::Floor => FLOOR,
                     },
                 );
             }

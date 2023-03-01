@@ -4,8 +4,9 @@ const MAX_ROOM_WIDTH: i32 = 10;
 const MAX_ROOM_HEIGHT: i32 = 10;
 
 pub struct MapBuilder {
-    pub map: Map,
+    map: Map,
     rooms: Vec<Rect>,
+    enemies: Vec<(Point, FontCharType)>,
     player_spawn: Point,
     rng: RandomNumberGenerator,
 }
@@ -14,6 +15,7 @@ impl MapBuilder {
         Self {
             map: Map::filled(map_width, map_height, TileType::Wall),
             rooms: Vec::new(),
+            enemies: Vec::new(),
             player_spawn: Point::zero(),
             rng: RandomNumberGenerator::new(),
         }
@@ -119,11 +121,60 @@ impl MapBuilder {
         self
     }
 
-    pub fn get_player_spawn(&self) -> Point {
-        self.player_spawn
+    pub fn default_enemies(&mut self) -> &mut Self {
+        // `map()` is conceptually similar to a [`for`] loop. However, as `map()` is
+        // lazy, it is best used when you're already working with other iterators.
+        // If you're doing some sort of looping for a side effect, it's considered
+        // more idiomatic to use [`for`] than `map()`.
+
+        self.rooms
+            .iter()
+            .skip(1)
+            .map(Rect::center)
+            .for_each(|position| {
+                self.enemies.push((
+                    position,
+                    *self
+                        .rng
+                        .random_slice_entry(&ENEMY_TYPES)
+                        .expect("ENEMY_TYPES empty?"),
+                ));
+            });
+
+        // for room in &self.rooms {
+        //     // enemies: Vec<(Point, FontCharType)>,
+        //     let enemy = self.rng.range(0, ENEMIES.len());
+        //     self.enemies.push((
+        //         room.center(),
+        //         ENEMIES[enemy]
+        //     ));
+        // }
+        self
     }
+
+    // pub fn get_enemies(&self) -> &Vec<(Point, FontCharType)> {
+    //     &self.enemies
+    // }
+
+    // pub fn rooms(&self) -> &Vec<Rect> {
+    //     &self.rooms
+    // }
+
+    // pub fn get_monsters(&self) ->
 
     pub fn consume_map(&mut self) -> Map {
         std::mem::replace(&mut self.map, Map::empty())
+    }
+
+    // pub fn rooms(&self) -> &[Rect] {
+    //     self.rooms.as_ref()
+    // }
+
+    pub fn enemies(&self) -> &[(Point, u16)] {
+        self.enemies.as_ref()
+    }
+
+    pub fn player_position(&self) -> Point {
+        self.player_spawn
     }
 }

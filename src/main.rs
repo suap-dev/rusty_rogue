@@ -2,17 +2,19 @@
 
 mod camera;
 mod components;
-pub mod glyph;
+mod glyph;
 mod map;
 mod map_builder;
 mod spawner;
 mod systems;
 // mod player;
 mod prelude {
-    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*, systems::*, *};
+    pub use crate::{camera::*, components::*, map::*, map_builder::*, spawner::*, systems::*, glyph::*};
     pub use bracket_lib::prelude::*;
     pub use legion::{systems::CommandBuffer, world::SubWorld, *};
 
+    pub const ENEMY_TYPES: [FontCharType; 4] = [ETTIN, OGRE, ORC, GOBLIN];
+    
     pub const DEFAULT_COLOR: ColorPair = ColorPair {
         // WHITE
         fg: RGBA {
@@ -61,25 +63,29 @@ impl GameState for RustyRogue {
 }
 impl RustyRogue {
     fn new() -> Self {
-        let mut ecs = World::default();
+        let mut world = World::default();
         let mut resources = Resources::default();
         let mut builder = MapBuilder::new(SCREEN_WIDTH, SCREEN_HEIGHT);
         builder
             .carve_rooms(NUM_ROOMS)
             .carve_corridors()
-            .default_player_spawn();
+            .default_player_spawn()
+            .default_enemies();
 
-        spawn_player(&mut ecs, builder.get_player_spawn());
+        spawn_player(&mut world, builder.player_position());
+        for enemy in builder.enemies() {
+            spawn_enemy(&mut world, enemy.0, enemy.1);
+        }
 
         resources.insert(builder.consume_map());
         resources.insert(Camera::new(
-            builder.get_player_spawn(),
+            builder.player_position(),
             CAMERA_WIDTH,
             CAMERA_HEIGHT,
         ));
 
         Self {
-            world: ecs,
+            world,
             resources,
             schedule: schedule(),
         }
