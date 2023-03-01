@@ -1,9 +1,9 @@
 use crate::prelude::*;
 
-pub fn spawn_enemy(world: &mut World, pos: Point, glyph: FontCharType) {
+pub fn spawn_enemy(world: &mut World, position: Point, glyph: FontCharType) {
     world.push((
         Enemy,
-        pos,
+        position,
         Render {
             color: DEFAULT_COLOR,
             glyph,
@@ -11,10 +11,10 @@ pub fn spawn_enemy(world: &mut World, pos: Point, glyph: FontCharType) {
     ));
 }
 
-pub fn spawn_player(world: &mut World, pos: Point) {
+pub fn spawn_player(world: &mut World, position: Point) {
     world.push((
         Player,
-        pos,
+        position,
         Render {
             color: DEFAULT_COLOR,
             glyph: PLAYER,
