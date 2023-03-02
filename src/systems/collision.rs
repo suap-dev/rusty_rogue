@@ -14,7 +14,7 @@ use crate::prelude::*;
 
 #[system]
 #[read_component(Point)]
-#[read_component(Player)]
+// #[read_component(Player)]
 #[read_component(Enemy)]
 pub fn collision(sub_world: &mut SubWorld, command_buffer: &mut CommandBuffer) {
     // we just get the first player position, since for now ther is one player. let's not overthink it.

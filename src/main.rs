@@ -12,6 +12,11 @@ mod prelude {
 
     pub const ENEMY_TYPES: [FontCharType; 4] = [ETTIN, OGRE, ORC, GOBLIN];
 
+    pub const NORTH: Point = Point { x: 0, y: -1 };
+    pub const SOUTH: Point = Point { x: 0, y: 1 };
+    pub const EAST: Point = Point { x: 1, y: 0 };
+    pub const WEST: Point = Point { x: -1, y: 0 };
+
     pub const DEFAULT_COLOR: ColorPair = ColorPair {
         // WHITE
         fg: RGBA {
